@@ -1,0 +1,279 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // ==========================================
+        // 0. PROJECT SETUP & HEALTH CHECK
+        // ==========================================
+        {
+            "label": "⚙️ Project Setup",
+            "type": "shell",
+            "command": "./.scripts/setup.sh",
+            "windows": {
+                "command": ".scripts\\setup.bat"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🩺 Project Doctor",
+            "type": "shell",
+            "command": "./.scripts/doctor.sh",
+            "windows": {
+                "command": ".scripts\\doctor.bat"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "📦 Sync Dependencies",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "sync"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "⬆️ Update Dependencies",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "lock",
+                "--upgrade"
+            ],
+            "problemMatcher": []
+        },
+
+        // ==========================================
+        // 1. CODE QUALITY
+        // ==========================================
+        {
+            "label": "🎨 Ruff: Format",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "ruff",
+                "format",
+                "."
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "🔍 Ruff: Check & Fix",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "ruff",
+                "check",
+                ".",
+                "--fix"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "🧠 Pyrefly: Type Check",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pyrefly",
+                "check"
+            ],
+            "problemMatcher": []
+        },
+
+        // ==========================================
+        // 2. TESTING
+        // ==========================================
+        {
+            "label": "🧪 Run Tests",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pytest",
+                "-v"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🧪 Run Tests with Coverage",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pytest",
+                "--cov=src",
+                "--cov-report=term-missing",
+                "--cov-report=html"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+
+        // ==========================================
+        // 3. VALIDATION
+        // ==========================================
+        {
+            "label": "🚀 Full Validation Pipeline",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "📦 Sync Dependencies",
+                "🎨 Ruff: Format",
+                "🔍 Ruff: Check & Fix",
+                "🧠 Pyrefly: Type Check",
+                "🧪 Run Tests"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🏁 Release Validation",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "📦 Sync Dependencies",
+                "🎨 Ruff: Format",
+                "🔍 Ruff: Check & Fix",
+                "🧠 Pyrefly: Type Check",
+                "🧪 Run Tests with Coverage",
+                "🔨 Rebuild Executable"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+
+        // ==========================================
+        // 4. APPLICATION RUNTIME
+        // ==========================================
+        {
+            "label": "▶️ Run Application",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "python",
+                ".scripts/run.py"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "clear": true,
+                "focus": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+
+        // ==========================================
+        // 5. BUILD PIPELINE
+        // ==========================================
+        {
+            "label": "🧹 Clean Build",
+            "type": "shell",
+            "command": "./.scripts/clean_build.sh",
+            "windows": {
+                "command": ".scripts\\clean_build.bat"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "📦 Generate Executable",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                ".scripts/build_exe.py"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "🔨 Rebuild Executable",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "🧹 Clean Build",
+                "📦 Generate Executable"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "▶️ Run Executable",
+            "type": "shell",
+            "command": "echo",
+            "args": [
+                "Executable runs on Windows only. Run via Python tasks instead."
+            ],
+            "windows": {
+                "command": ".\\dist\\${workspaceFolderBasename}.exe"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "clear": true,
+                "focus": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+
+        // ==========================================
+        // 6. CLEANUP
+        // ==========================================
+        {
+            "label": "🧹 Clear Python Caches",
+            "type": "shell",
+            "command": "./.scripts/clear_caches.sh",
+            "windows": {
+                "command": ".scripts\\clear_caches.bat"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🧹 Clean Everything",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "🧹 Clean Build",
+                "🧹 Clear Python Caches"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

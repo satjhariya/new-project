@@ -1,0 +1,181 @@
+[project]
+name = "new-project"
+version = "0.1.0"
+description = "New project template"
+readme = "README.md"
+authors = [
+    { name = "sat", email = "sat@personal" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.11.19,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ai_rf_system"]
+
+keywords = [
+    "project",
+    "tooling",
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Typing :: Typed"
+]
+
+log_level = "INFO"
+
+dependencies = [
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.15.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyrefly",
+    "pyinstaller>=6.21.0",
+    "pytest>=9.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16",
+]
+
+
+# ==========================================
+# Tooling Configuration
+# ==========================================
+
+# ==========================================
+# Ruff Linter & Formatter Configuration
+# ==========================================
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+exclude = [
+    ".git",
+    ".venv",
+    ".pyrefly_cache",
+    ".pytest_cache",
+    "build",
+    "dist",
+]
+fix = true
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "SIM",
+    "C4",
+    "RET",
+    "TCH",
+]
+ignore = [
+    "E501",
+    "E402",
+]
+
+fixable = ["ALL"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+
+# ==========================================
+# Testing
+# ==========================================
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+
+pythonpath = [
+    "src",
+]
+
+# Test file patterns
+python_files = [
+    "test_*.py",
+    "*_test.py",
+]
+
+# Test class patterns
+python_classes = [
+    "Test*",
+]
+
+# Test function patterns
+python_functions = [
+    "test_*",
+]
+
+# Better output
+addopts = [
+    "-ra",
+    "-q",
+    "--strict-config",
+    "--strict-markers",
+    "--tb=short",
+]
+
+# Custom markers (extend as needed)
+markers = [
+    "unit: fast isolated tests",
+    "integration: external dependency tests",
+    "e2e: end-to-end tests",
+]
+
+# Silence noisy warnings if needed
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+]
+
+# ==========================================
+# Pyrefly Type Checker Configuration
+# ==========================================
+[tool.pyrefly]
+preset = "default"
+python_version = "3.13"
+python_platform = "Windows"
+
+search_path = [
+    "src"
+]
+
+project_includes = [
+    "src",
+    "tests"
+]
+
+project_excludes = [
+    "**/.git",
+    "**/.venv",
+    "**/__pycache__",
+    "**/build",
+    "**/dist",
+]
+
+python_interpreter = ".venv/bin/python"
+ignore_errors_in_generated_code = true
+
+
