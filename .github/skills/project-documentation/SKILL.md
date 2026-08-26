@@ -25,6 +25,12 @@ The repository README is the documentation index. At the end of a documentation
 update, use the sibling `create-readme` skill to refresh `README.md` and link to
 each maintained document.
 
+Generic reference templates are available under
+`.github/skills/project-documentation/references/`. Use them for document
+structure, heading order, and Mermaid placement. They are examples only: never
+copy their placeholder claims, commands, dates, names, or project details into
+the generated documentation without repository evidence.
+
 Update documentation only unless the user explicitly requests source,
 configuration, or tooling changes. Preserve authored historical content and
 avoid replacing it with generated prose.
@@ -53,6 +59,13 @@ Build a compact fact table before editing. Each fact should include:
 Use `observed` for direct repository evidence. Use `inferred` only when the
 inference is strong and label it in the resulting documentation. Do not turn a
 template placeholder into a project fact.
+
+Use the generic files in
+`.github/skills/project-documentation/references/` as a structural checklist:
+`README.template.md` for the README index and the templates under
+`references/docs/` for the seven maintained document types. Compare them with
+the repository's current files before generating content so local authored
+sections are preserved.
 
 ### 2. Reconcile contradictions
 
