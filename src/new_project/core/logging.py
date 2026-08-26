@@ -35,7 +35,7 @@ def configure_logging(
             raise ValueError(f"Unknown log level: {level}")
         level = getattr(logging, level)
 
-    # Log to stdout or stderr depending on MCP stdio mode requirement
+    # Log to stdout or stderr depending on the application's stdio mode.
     stream = sys.stderr if use_stderr else sys.stdout
     handlers: list[logging.Handler] = [logging.StreamHandler(stream)]
 

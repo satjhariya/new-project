@@ -1,7 +1,7 @@
 @echo off
 
 echo =======================================
-echo  Engineering MCP Suite - Doctor
+echo  Project Doctor
 echo =======================================
 echo.
 
@@ -56,10 +56,10 @@ if exist docs (
     echo ❌ docs
 )
 
-if exist scripts (
-    echo ✅ scripts
+if exist .scripts (
+    echo ✅ .scripts
 ) else (
-    echo ❌ scripts
+    echo ❌ .scripts
 )
 
 if exist pyproject.toml (
@@ -88,15 +88,13 @@ echo.
 echo Python Package Checks
 echo ---------------------------------------
 
-uv run python -c "import mcp; print('✅ mcp OK')" 2>nul || echo ❌ mcp not installed
-
 uv run python -c "import pydantic; print('✅ pydantic OK')" 2>nul || echo ❌ pydantic not installed
 
 echo.
 echo Import Test
 echo ---------------------------------------
 
-uv run python -c "import ai-rf-system; print('✅ ai_rf_system import successful')" 2>nul || echo ❌ engineering_mcp import failed
+uv run python -c "from pathlib import Path; import importlib; packages = [path.name for path in Path('src').iterdir() if (path / '__init__.py').is_file()]; assert packages, 'No Python package found under src'; [importlib.import_module(package) for package in packages]; print('Package import successful:', ', '.join(packages))" 2>nul || echo Package import failed
 
 echo.
 echo =======================================

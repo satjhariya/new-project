@@ -3,7 +3,7 @@
 set -e
 
 echo "======================================="
-echo " Engineering MCP Suite Setup"
+echo " Project Setup"
 echo "======================================="
 
 echo

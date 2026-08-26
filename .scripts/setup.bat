@@ -1,7 +1,7 @@
 @echo off
 
 echo =======================================
-echo AI RF SYSTEM Setup
+echo Project Setup
 echo =======================================
 
 echo.

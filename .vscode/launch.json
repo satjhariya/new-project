@@ -14,7 +14,7 @@
             "justMyCode": true
         },
         {
-            "name": "🚀 Debug Engineering MCP Server",
+            "name": "🚀 Debug Application",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/.scripts/run.py",
