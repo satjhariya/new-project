@@ -47,13 +47,17 @@ local secrets and environment overrides.
 ### Decision
 
 Use Pydantic Settings with a cached `get_settings()` function. Support
-`ENVIRONMENT` and `DEFAULT_LOG_LEVEL`, and ignore unknown `.env` keys.
+`ENVIRONMENT`, `DEFAULT_LOG_LEVEL`, and `LOG_FILE`, and ignore unknown `.env`
+keys. The default log file is `logs/app.log` relative to the process working
+directory.
 
 ### Consequences
 
 - Local and deployment environments can provide configuration externally.
 - Tests must clear the settings cache when changing environment variables.
 - The supported configuration surface is explicit and currently small.
+- Startup creates a local `logs/app.log` file unless `LOG_FILE` is overridden or
+	empty.
 
 ### Evidence
 

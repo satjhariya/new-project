@@ -31,13 +31,6 @@ classifiers = [
     "Typing :: Typed"
 ]
 
-log_level = "INFO"
-
-dependencies = [
-    "pydantic>=2.13.4",
-    "pydantic-settings>=2.15.0",
-]
-
 [dependency-groups]
 dev = [
     "pyrefly",
@@ -159,7 +152,7 @@ filterwarnings = [
 [tool.pyrefly]
 preset = "default"
 python_version = "3.13"
-python_platform = "Windows"
+python_platform = "linux"
 
 search_path = [
     "src"

@@ -34,8 +34,10 @@
 Configuration uses Pydantic Settings and reads `.env` plus environment
 variables. The settings cache should be cleared in tests when environment
 values change. Logging is obtained through `get_logger()` and defaults to the
-configured `DEFAULT_LOG_LEVEL`; use `shutdown_logging()` when tests need to
-reset logging state.
+configured `DEFAULT_LOG_LEVEL` and `logs/app.log` relative to the process
+working directory. Set `LOG_FILE` to override the location or disable the file
+handler with an empty value. Use `shutdown_logging()` when tests need to reset
+logging state.
 
 ## Git Workflow
 

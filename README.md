@@ -63,6 +63,9 @@ Run the VS Code tasks from the command palette (`Tasks: Run Task`):
 
 For environment variables, validation commands, platform notes, and troubleshooting, see the [Development Guide](docs/development.md).
 
+By default, application logs are written to `logs/app.log` relative to the
+process working directory. Set `LOG_FILE` in `.env` to change the location.
+
 ## Documentation
 
 - [Architecture](docs/architecture.md)

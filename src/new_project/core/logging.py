@@ -66,7 +66,8 @@ def get_logger(name: str) -> logging.Logger:
     already been initialized.
     """
     if not _CONFIGURED:
-        configure_logging(level=get_settings().default_log_level)
+        settings = get_settings()
+        configure_logging(level=settings.default_log_level, log_file=settings.log_file)
 
     return logging.getLogger(name)
 

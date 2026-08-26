@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Generic project setup and skeleton structure.
 - Configurable Pydantic settings and reusable application logging.
+- Startup log-file generation at `logs/app.log`, configurable with `LOG_FILE`.
 - Generic project-documentation and README reference skills.
 
 ### Changed

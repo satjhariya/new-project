@@ -60,9 +60,11 @@ supported values are:
 
 - `ENVIRONMENT`: `development`, `staging`, or `production`; default `development`.
 - `DEFAULT_LOG_LEVEL`: `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`; default `INFO`.
+- `LOG_FILE`: file path for application logs; default `logs/app.log`.
 
 `get_settings()` caches the settings object. Logging defaults to stdout, can use
-stderr, and can add a file handler while creating its parent directory. Calling
+stderr, and writes to `logs/app.log` relative to the process working directory
+by default. The file handler creates parent directories as needed. Calling
 `configure_logging()` again replaces existing root handlers.
 
 ## Dependencies and Packaging

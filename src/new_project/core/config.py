@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     # Core Settings
     environment: Literal["development", "staging", "production"] = "development"
     default_log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+    log_file: str | None = "logs/app.log"
 
 
 @lru_cache

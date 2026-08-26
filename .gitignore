@@ -14,6 +14,7 @@ wheels/
 # Test and coverage output
 htmlcov/
 .coverage
+logs/
 
 # Editor and operating-system files
 .DS_Store

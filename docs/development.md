@@ -33,6 +33,12 @@ by Git.
 | --- | --- | --- |
 | `ENVIRONMENT` | `development`, `staging`, `production` | `development` |
 | `DEFAULT_LOG_LEVEL` | `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` | `INFO` |
+| `LOG_FILE` | A writable relative or absolute file path | `logs/app.log` |
+
+When the application starts, the default log file is generated at
+`<process-working-directory>/logs/app.log`. Parent directories are created
+automatically. Set `LOG_FILE` to another path, or leave it empty to disable the
+file handler. Log files are not rotated automatically.
 
 ## Common Commands
 
