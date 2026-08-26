@@ -1,14 +1,21 @@
 # Python-generated files
 __pycache__/
-*.py[oc]
+*.py[cod]
 build/
 dist/
 wheels/
-*.egg-info
+*.egg-info/
 
-# Virtual environments
-.venv
-
+# Virtual environments and local configuration
+.venv/
 .env
 
-.github
+# Test and coverage output
+htmlcov/
+.coverage
+
+# Editor and operating-system files
+.DS_Store
+
+htmlcov
+.coverage

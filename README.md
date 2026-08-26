@@ -59,3 +59,13 @@ This template heavily utilizes VS Code tasks. Press `Ctrl+Shift+B` (or `Cmd+Shif
 *   **`🎨 Ruff: Format`**: Formats the codebase.
 *   **`🚀 Full Validation Pipeline`**: Runs dependencies sync, formatting, type checking, and tests in sequence.
 *   **`📦 Generate Executable`**: Compiles the source code into a standalone binary inside the `dist/` folder.
+
+## Documentation
+
+- [Architecture](docs/architecture.md)
+- [Changelog](docs/CHANGELOG.md)
+- [Conventions](docs/conventions.md)
+- [Architectural Decisions](docs/decision.md)
+- [Development Guide](docs/development.md)
+- [Roadmap](docs/roadmap.md)
+- [Timeline](docs/timeline.md)
