@@ -1,6 +1,6 @@
 ---
 name: ruff-recursive-fix
-description: Run Ruff checks with optional scope and rule overrides, apply safe and unsafe autofixes iteratively, review each change, and resolve remaining findings with targeted edits or user decisions.
+description: "Executes iterative Ruff linting and formatting with safe/unsafe autofixes, diff reviews, manual remediation, and test verification. ALWAYS trigger this skill whenever the user mentions fixing Ruff errors, running Ruff, fixing linting issues, formatting Python code, or cleaning up Python code style—including phrases like 'run ruff', 'fix ruff errors', 'fix lint', 'ruff fix', 'lint and format python', 'run ruff recursive fix', or 'fix python linting'."
 ---
 
 # Ruff Recursive Fix
@@ -10,27 +10,29 @@ description: Run Ruff checks with optional scope and rule overrides, apply safe 
 Use this skill to enforce code quality with Ruff in a controlled, iterative workflow.
 It supports:
 
-- Optional scope limitation to a specific folder.
-- Default project settings from `pyproject.toml`.
-- Flexible Ruff invocation (`uv`, direct `ruff`, `python -m ruff`, or equivalent).
+- Optional scope limitation to a specific folder or file.
+- Default project settings from `pyproject.toml` or `ruff.toml`.
+- Flexible Ruff invocation (`uv run ruff`, `ruff`, `python -m ruff`, etc.).
 - Optional per-run rule overrides (`--select`, `--ignore`, `--extend-select`, `--extend-ignore`).
-- Automatic safe then unsafe autofixes.
-- Diff review after each fix pass.
-- Recursive repetition until findings are resolved or require a decision.
-- Judicious use of inline `# noqa` only when suppression is justified.
+- Automatic safe autofixes followed by controlled unsafe autofixes.
+- Diff review and automated test suite verification after fix passes.
+- Automatic rollback of unsafe fixes if tests fail.
+- Recursive repetition until findings are resolved or require a user decision.
+- Judicious use of inline `# noqa` only when suppression is explicitly justified.
 
 ## Inputs
 
 Collect these inputs before running:
 
 - `target_path` (optional): folder or file to check. Empty means whole repository.
-- `ruff_runner` (optional): explicit Ruff command prefix (for example `uv run`, `ruff`, `python -m ruff`, `pipx run ruff`).
+- `ruff_runner` (optional): explicit Ruff command prefix (for example `uv run ruff`, `ruff`, `python -m ruff`).
 - `rules_select` (optional): comma-separated rule codes to enforce.
 - `rules_ignore` (optional): comma-separated rule codes to ignore.
 - `extend_select` (optional): extra rules to add without replacing configured defaults.
 - `extend_ignore` (optional): extra ignored rules without replacing configured defaults.
 - `allow_unsafe_fixes` (default: true): whether to run Ruff unsafe fixes.
 - `ask_on_ambiguity` (default: true): always ask the user when multiple valid choices exist.
+- `run_tests_on_fix` (default: true): run project test suite after unsafe fixes if tests are available.
 
 ## Command Construction
 
@@ -66,11 +68,6 @@ With optional target:
 
 ```bash
 <ruff_cmd> format <target_path>
-```
-
-Add optional target:
-
-```bash
 <ruff_cmd> check <target_path>
 ```
 
@@ -87,7 +84,7 @@ Examples:
 
 ```bash
 # Full project with defaults from pyproject.toml
-ruff check
+uv run ruff check
 
 # One folder with defaults
 python -m ruff check src/models
@@ -108,32 +105,35 @@ ruff check src/data --select F,E9,I
 	- Autofixable safe.
 	- Autofixable unsafe.
 	- Not autofixable.
-3. If no findings remain, stop.
+3. If no findings remain, run `<ruff_cmd> format` and stop.
 
 ### 2. Safe Autofix Pass
 
-1. Run Ruff with `--fix` using the same scope/options.
+1. Run Ruff with `--fix` using the same scope/options: `<ruff_cmd> check --fix <target_path>`
 2. Review resulting diff carefully for semantic correctness and style consistency.
 3. Run `<ruff_cmd> format` on the same scope.
 4. Re-run `<ruff_cmd> check` to refresh remaining findings.
 
-### 3. Unsafe Autofix Pass
+### 3. Unsafe Autofix Pass & Test Verification
 
 Run only if findings remain and `allow_unsafe_fixes=true`.
 
-1. Run Ruff with `--fix --unsafe-fixes` using the same scope/options.
+1. Run Ruff with `--fix --unsafe-fixes` using the same scope/options: `<ruff_cmd> check --fix --unsafe-fixes <target_path>`
 2. Review resulting diff carefully, prioritizing behavior-sensitive edits.
 3. Run `<ruff_cmd> format` on the same scope.
-4. Re-run `<ruff_cmd> check`.
+4. **Test Verification**: If `run_tests_on_fix=true` and a test runner exists (e.g. `uv run pytest` or `pytest`), run tests.
+   - If tests fail after applying unsafe fixes, revert the specific unsafe edit (`git checkout -- <file>` or manual undo) and mark the finding for manual remediation or user review.
+5. Re-run `<ruff_cmd> check`.
 
 ### 4. Manual Remediation Pass
 
-For remaining findings:
+For remaining non-autofixable findings:
 
 1. Fix directly in code when there is a clear, safe correction.
 2. Keep edits minimal and local.
 3. Run `<ruff_cmd> format` on the same scope.
-4. Re-run `<ruff_cmd> check`.
+4. Run available tests to confirm no regressions.
+5. Re-run `<ruff_cmd> check`.
 
 ### 5. Ambiguity Policy
 
@@ -146,7 +146,7 @@ Use suppression only when all conditions are true:
 
 - The rule conflicts with required behavior, public API, framework conventions, or readability goals.
 - Refactoring would be disproportionate to the value of the rule.
-- The suppression is narrow and specific (single line, explicit code when possible).
+- The suppression is narrow and specific (single line, explicit rule code).
 
 Guidelines:
 
@@ -177,9 +177,10 @@ Before declaring completion:
 
 - Ruff returns no unexpected findings for the chosen scope/options.
 - All autofix diffs are reviewed for correctness.
+- Test suite passes cleanly if tests exist.
+- Any reverted unsafe fixes are reported with explanation.
 - No suppression is added without explicit justification.
-- Any unsafe fix with possible behavioral impact is highlighted to the user.
-- Ruff formatting is executed in every iteration.
+- Ruff formatting (`<ruff_cmd> format`) is executed in every iteration.
 
 ## Output Contract
 
@@ -187,8 +188,9 @@ At the end of execution, report:
 
 - Scope and Ruff options used.
 - Number of iterations performed.
-- Summary of fixed findings.
-- List of manual fixes.
+- Summary of fixed findings (safe & unsafe).
+- Test execution results (pass/fail).
+- List of manual fixes and any reverted unsafe fixes.
 - List of suppressions with rationale.
 - Remaining findings, if any, and required user decisions.
 

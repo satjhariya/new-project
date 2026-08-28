@@ -1,42 +1,52 @@
 ---
 name: commit-message-storyteller
-description: 'Analyzes git diffs or staged changes and generates narrative commit messages that explain WHY a change was made, not just what changed — following Conventional Commits format. Use when asked to "write a commit message", "generate a commit", "describe my changes", "what should I commit this as", "commit this", "summarize my diff", or "help me commit". Works with git diff output, staged files, or plain descriptions of changes.'
+description: "Analyzes git working tree, inspects diffs/staged changes, generates narrative commit messages that explain WHY a change was made, not just what changed — following Conventional Commits formats, and handles git staging and commit workflows. ALWAYS trigger this skill whenever the user mentions committing changes, running a commit, saving changes to git, or writing commit messages—including phrases like 'commit the changes', 'commit my changes', 'commit this', 'commit', 'make a commit', 'write a commit message', 'stage and commit', 'generate commit', or 'help me commit'."
 ---
 
 # Commit Message Storyteller
 
-Transforms raw git diffs and change descriptions into clear, story-driven commit messages that follow the [Conventional Commits](https://www.conventionalcommits.org/) specification. Instead of "update file.js", you get messages that communicate intent, context, and impact.
+Transforms working tree changes, git diffs, and change descriptions into clear, story-driven commit messages following the [Conventional Commits](https://www.conventionalcommits.org/) specification, and guides or executes the staging and committing workflow.
 
 ## When to Use This Skill
 
-- User says "write a commit message", "help me commit", or "generate a commit"
-- User pastes a git diff or describes code changes
-- User says "what should I commit this as?" or "summarize my diff"
-- User wants better commit history for their team or open-source project
-- User is preparing a pull request and wants meaningful commit messages
+ALWAYS use this skill when the user requests a commit or commit message, including:
+- "commit the changes" or "commit my changes"
+- "commit" or "make a commit"
+- "stage and commit"
+- "write a commit message" or "generate a commit"
+- "what should I commit this as?" or "summarize my diff"
+- User pastes a git diff or describes code changes to commit
 
-## Prerequisites
+## End-to-End Workflow
 
-Have at least one of the following ready:
-- Output from `git diff` or `git diff --staged`
-- A description of what you changed and why
-- A list of modified files
+### Step 1: Inspect Working Tree Automatically
 
-## How It Works
+Do not wait for the user to paste diffs manually. Immediately run shell commands to inspect the repository state:
 
-### Step 1: Gather the Change Context
+```bash
+git status
+git diff
+git diff --staged
+```
 
-Ask the user (or infer from the diff) for:
+- If no changes exist in `git status`, notify the user that the working tree is clean.
+- Identify which files are untracked, modified, or already staged.
 
-1. **What changed** — files, functions, logic affected
-2. **Why it changed** — bug fix, new feature, refactor, performance, etc.
-3. **Who/what triggered it** — issue number, user request, tech debt, etc.
+### Step 2: Gather Change Context & Evaluate Commit Splitting
 
-If the user provides a raw `git diff`, extract this context automatically from the diff.
+Extract the core story:
+1. **What changed** — files, functions, and logic affected
+2. **Why it changed** — problem solved, bug fixed, feature added, refactored
+3. **Trigger / Reference** — issue numbers, user request, or task goal
 
-### Step 2: Identify the Commit Type
+**Check for split commits:**
+If the diff contains logically distinct, unrelated concerns (e.g., updating docs + fixing a bug + refactoring an API), offer to split them into separate atomic commits:
+- Separate files/modules with unrelated purposes -> separate commits.
+- Feature work vs. independent bug fix -> separate commits.
 
-Map the change to a Conventional Commits type using this guide:
+### Step 3: Identify Commit Type & Scope
+
+Map the change to a Conventional Commits type:
 
 | Type | Use When |
 |------|----------|
@@ -53,9 +63,9 @@ Map the change to a Conventional Commits type using this guide:
 
 See `references/conventional-commits-guide.md` for detailed examples.
 
-### Step 3: Write the Commit Message
+### Step 4: Write the Narrative Commit Message
 
-Follow this structure:
+Follow this exact structure:
 
 ```
 <type>(<optional scope>): <short imperative summary>
@@ -68,7 +78,7 @@ Follow this structure:
 #### Rules for Each Part
 
 **Subject line (first line):**
-- Use imperative mood: "add", "fix", "remove" — not "added" or "fixes"
+- Use imperative mood: "add", "fix", "remove" (not "added" or "fixes")
 - Max 72 characters
 - No period at the end
 - Lowercase after the colon
@@ -84,11 +94,14 @@ Follow this structure:
 - Reference issues: `Closes #123`, `Fixes #456`, `Refs #789`
 - Mark breaking changes: `BREAKING CHANGE: <description>`
 
-### Step 4: Generate Output
+### Step 5: Present Message & Execute Commit
 
-Produce the commit message in a copyable code block, followed by a one-line plain-English explanation of the story you told.
+1. Display the proposed commit message in a copyable code block along with a one-sentence summary of the story told.
+2. If files are unstaged, stage the relevant files (`git add <files>` or `git add .`).
+3. Execute the commit (`git commit -m "..."`).
+4. If permissions or unsandboxed command prompts arise during execution, guide the user cleanly or request appropriate execution approval.
 
-**Example output:**
+## Example Output
 
 ```
 fix(auth): prevent token refresh loop on expired sessions
@@ -122,21 +135,26 @@ If the diff contains **logically separate changes**, split them into multiple co
 | Situation | How to Handle |
 |-----------|---------------|
 | User provides no context beyond a diff | Infer type and scope from file names and changed symbols |
-| Changes span many files with no clear theme | Ask: "Is this one logical change, or multiple?" |
-| Breaking change detected | Add `BREAKING CHANGE:` footer automatically |
+| Working tree has untracked files | Check if untracked files belong to the change before staging |
+| Breaking change detected | Add `BREAKING CHANGE:` footer automatically and append `!` to type |
 | User says "keep it short" | Omit body, just write a strong subject line |
-| No issue number available | Omit the footer entirely |
+| User denies command permission | Present the full git command line for the user to run manually |
 
 ---
 
-## Quick Reference
+## Quick Reference Commands
 
 ```bash
-# Get your staged diff to paste into Copilot
+# Check working tree status
+git status
+
+# Inspect unstaged and staged diffs
+git diff
 git diff --staged
 
-# Or get the last uncommitted working tree changes
-git diff
+# Stage and commit
+git add .
+git commit -m "<message>"
 ```
 
 See `references/conventional-commits-guide.md` for type examples and scope guidelines.

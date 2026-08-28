@@ -1,11 +1,11 @@
 ---
 name: project-documentation
-description: "Use when documenting, refreshing, reconciling, or auditing this project's architecture, development guide, conventions, decisions, roadmap, timeline, or changelog. Generates source-backed Markdown documentation with Mermaid diagrams and reports contradictions without silently changing code."
+description: "Use when documenting, refreshing, reconciling, or auditing this project's README.md, architecture, development guide, conventions, decisions, roadmap, timeline, or changelog. Generates source-backed Markdown documentation with Mermaid diagrams and reports contradictions without silently changing code."
 ---
 
 # Project Documentation
 
-Generate and maintain the documentation set in `docs/` from evidence in the
+Generate and maintain the documentation set in `docs/` and `README.md` from evidence in the
 repository. Treat documentation as a maintained technical artifact: accurate,
 traceable, consistent, and stable across repeated runs.
 
@@ -13,6 +13,7 @@ traceable, consistent, and stable across repeated runs.
 
 This skill covers these documentation files:
 
+- `README.md` (repository entry point and documentation index)
 - `docs/architecture.md`
 - `docs/CHANGELOG.md`
 - `docs/conventions.md`
@@ -21,9 +22,7 @@ This skill covers these documentation files:
 - `docs/roadmap.md`
 - `docs/timeline.md`
 
-The repository README is the documentation index. At the end of a documentation
-update, use the sibling `create-readme` skill to refresh `README.md` and link to
-each maintained document.
+The repository `README.md` serves as the primary entry point and index for all maintained documentation files in `docs/`.
 
 Generic reference templates are available under
 `.github/skills/project-documentation/references/`. Use them for document
@@ -163,23 +162,23 @@ authored facts, ADR history, changelog entries, and intentional decisions.
 Do not duplicate headings, entries, diagrams, links, or warnings. A second run
 with no source changes should produce no documentation diff.
 
-### 5. Orchestrate the README
+### 5. Generate and Orchestrate `README.md`
 
-After all files under `docs/` have been updated and validated, invoke the
-`create-readme` skill. Provide it with the final documentation facts and ask it
-to update `README.md` so it:
+After all files under `docs/` have been updated and validated, refresh `README.md` to serve as the project entry point and index. Ensure that `README.md`:
 
-- reflects the current project purpose and verified setup commands
-- links to `architecture.md`, `CHANGELOG.md`, `conventions.md`,
-   `decision.md`, `development.md`, `roadmap.md`, and `timeline.md`
-- keeps the documentation links as an index rather than duplicating their full
-   contents
-- follows the `create-readme` skill's concise GFM structure and avoids adding
-   standalone `CHANGELOG`, `CONTRIBUTING`, or `LICENSE` sections
+- **Role & Quality**: Is written with senior open-source craftsmanship—appealing, informative, and easy to read.
+- **Inspiration**: Takes structural, tonal, and content inspiration from high-quality README references:
+  - `https://raw.githubusercontent.com/Azure-Samples/serverless-chat-langchainjs/refs/heads/main/README.md`
+  - `https://raw.githubusercontent.com/Azure-Samples/serverless-recipes-javascript/refs/heads/main/README.md`
+  - `https://raw.githubusercontent.com/sinedied/run-on-output/refs/heads/main/README.md`
+  - `https://raw.githubusercontent.com/sinedied/smoke/refs/heads/main/README.md`
+- **Tone & Conciseness**: Is concise and to the point without overusing emojis.
+- **Formatting**: Uses GFM (GitHub Flavored Markdown) and GitHub admonition syntax (`> [!NOTE]`, `> [!IMPORTANT]`, etc.) where appropriate.
+- **Header**: Includes the project logo or icon in the header if one is available in the repository.
+- **Documentation Index**: Reflects the current project purpose and verified setup commands, and explicitly links to all maintained docs (`docs/architecture.md`, `docs/CHANGELOG.md`, `docs/conventions.md`, `docs/decision.md`, `docs/development.md`, `docs/roadmap.md`, and `docs/timeline.md`) rather than duplicating their full contents.
+- **Section Scoping**: Excludes standalone `LICENSE`, `CONTRIBUTING`, or `CHANGELOG` sections, as dedicated files exist for those.
 
-The README step is last because its links and summary must reflect the final
-state of every other documentation file. Validate that every linked path exists
-after the README update.
+The README update is the final step because its links and summary must reflect the validated state of every other documentation file. Confirm that every linked path in `README.md` exists after the update.
 
 ## Validation
 
